@@ -11,11 +11,11 @@ Q = 10.0                        # [=] L/min
 
 # parameters and their stdev (95% CI / 1.96)
 params = {
-    'Ea':    (111200, 5600  / 1.96),  # [=] J/mol
-    'ln_A':  (36.0,   2.2   / 1.96), 
-    'alpha': (1.026,  0.063 / 1.96),
-    'beta':  (0.954,  0.068 / 1.96),
-    'gamma': (-0.134, 0.067 / 1.96)
+    'Ea':    (111200, 5586.7736 / 3.078),  # [=] J/mol
+    'ln_A':  (36.0,   2.1950    / 3.078),
+    'alpha': (1.026,  0.0197    / 1.638),
+    'beta':  (0.954,  0.0212    / 1.638),
+    'gamma': (-0.134, 0.0212    / 1.638)
 }
 
 # func to calculate volume
@@ -57,7 +57,7 @@ for name, (mu, sig) in params.items():
     print(f"  {name:6s}: {abs(delta):.4f} L  (relative: {abs(delta)/vol*100:.1f}%)")
 
 # plotting
-pct_change = np.linspace(0, 100, 300)
+pct_change = np.linspace(-100, 100, 500)
 
 # names and colors for each param
 params_plot = {
@@ -81,6 +81,7 @@ for name, (label, color) in params_plot.items():
 ax.axhline(0, color="black", linewidth=0.8, linestyle="--")
 ax.set_xlabel("Percent Change in Parameter (%)", fontsize=12)
 ax.set_ylabel("Percent Change in Required CSTR Volume (%)", fontsize=12)
+ax.set_xlim(-100, 100)
 ax.set_ylim(-100, 100)
 ax.legend(fontsize=10, framealpha=0.9)
 ax.grid(True, alpha=0.3)
