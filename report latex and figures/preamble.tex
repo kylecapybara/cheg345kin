@@ -1,0 +1,93 @@
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{chemfig}
+\usepackage[version=4]{mhchem}
+\setchemfig{bond offset=2pt, atom sep=2.3em}
+\usepackage{mathtools}
+\usepackage{xcolor}
+\usepackage{wrapfig}
+
+
+% setting up shiz for citations. use \autocite{} 
+\usepackage[
+  colorlinks=true,
+  linkcolor=blue!80!black,
+  citecolor=blue!80!black,
+  urlcolor=blue!80!black
+]{hyperref}
+\usepackage[style=chem-acs, autocite=inline]{biblatex}
+\DeclareFieldFormat{labelnumber}{\textit{#1}}
+\makeatletter
+\renewcommand{\bibleftbracket}{(}
+\renewcommand{\bibrightbracket}{)}
+\makeatother
+\addbibresource{references.bib}
+\ExecuteBibliographyOptions{doi=true}
+\usepackage{cleveref}
+
+
+%%%%%%%%%% clever setup
+% Fully spelled out, lowercase
+\crefname{figure}{figure}{figures}
+\crefname{table}{table}{tables}
+\crefname{section}{section}{sections}
+\crefname{equation}{equation}{equations}
+
+% No parentheses for equations
+\creflabelformat{equation}{#2#1#3}
+
+% Uniform style
+\crefformat{figure}{#2Figure~#1#3}
+\crefformat{table}{#2Table~#1#3}
+\crefformat{section}{#2Section~#1#3}
+\crefformat{equation}{#2Equation~#1#3}
+
+\Crefformat{figure}{#2Figure~#1#3}
+\Crefformat{table}{#2Table~#1#3}
+\Crefformat{section}{#2Section~#1#3}
+\Crefformat{equation}{#2Equation~#1#3}
+%%%%%%%%%%
+
+
+% changing TOC to have smaller "contents" word
+\usepackage{tocloft}
+\renewcommand{\cfttoctitlefont}{\Large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+\usepackage{listings}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{green!60!black},
+    commentstyle=\color{gray},
+    showstringspaces=false,
+    frame=single,
+    breaklines=true
+}
+
+\usepackage{caption} \captionsetup{justification=raggedright,singlelinecheck=false} \setlength{\captionmargin}{0pt}
+
+\usepackage{etoolbox}
+
+\pretocmd{\appendix}{
+  \crefname{section}{appendix}{appendices}
+  \crefname{subsection}{appendix}{appendices}
+  \crefname{subsubsection}{appendix}{appendices}
+
+  \Crefname{section}{Appendix}{Appendices}
+  \Crefname{subsection}{Appendix}{Appendices}
+  \Crefname{subsubsection}{Appendix}{Appendices}
+}{}{}
+
+% Define a real "appendix" type
+\crefname{appendix}{appendix}{appendices}
+\Crefname{appendix}{Appendix}{Appendices}
+\crefformat{appendix}{#2Appendix~#1#3}
+\Crefformat{appendix}{#2Appendix~#1#3}

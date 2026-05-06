@@ -1,0 +1,408 @@
+\documentclass{article}
+\input{preamble.tex}
+
+
+\title{Determination of Kinetic Parameters and Applications of Measured Rate Law for Iodination of Acetone}
+\author{Ethan Bowen, Ryan Lange, Megan Lynch, Kyle Wodehouse}
+\date{April 2026}
+
+\begin{document}
+\input{title.tex}
+\input{abstract.tex}
+
+
+\tableofcontents
+
+\section{Introduction}
+
+The ability to quantify reaction kinetics is central to the design and scale-up of chemical reactors. Errors in rate parameters propagate directly into vessel sizing, residence time, and ultimately process economics. Additionally, catalysis is central to the chemical industry, as over 90\% \autocite{armor_new_1991} of industrial chemical processes rely on catalysts to achieve economically viable reaction rates and selectivities \autocite{ertl_handbook_2008, rothenberg_catalysis_2008, armor_history_2011, liu_catalytic_2011, yang_selective_2025, paunovic_exploring_2026, li_critical_2025, xin_roadmap_2026}.  This report documents two laboratory exercises that explore each discipline through hands-on experimentation. The first study examines the acid-catalyzed iodination of acetone to determine its rate law and temperature dependency. The second exercise provides a practical overview of a pneumatic pressure rack, focusing on the hardware used to monitor and control fluid pressure in industrial settings.
+
+The iodination of acetone is a standard model reaction for kinetic studies because the reaction progress is easily visible. As iodine is consumed, its characteristic red-brown color fades, allowing the reaction rate to be monitored using UV-visible spectrophotometry. The goal of this experiment was to determine the reaction orders for acetone, hydrochloric acid (HCl), and iodine using the method of initial rates. By measuring rate constants at varying temperatures, the activation energy ($E_a$) and pre-exponential factor ($A$) were calculated from the Arrhenius equation \autocite{arrhenius}. These parameters are essential for engineering applications, as they allow for the accurate sizing of industrial reactors, such as continuous stirred-tank reactors (CSTRs), and the modeling of complex behaviors like autocatalysis in batch stirred-tank reactors (BSTRs).
+
+
+\subsection{Objectives}
+The primary objective of the kinetics lab was to determine the rate law and Arrhenius parameters for the acid-catalyzed iodination of acetone through the method of initial rates. Using the experimentally determined rate law, a CSTR was sized for a specified production target and a Monte Carlo simulation was performed to quantify uncertainty in the volume prediction. Additionally, a BSTR with autocatalytic behavior was numerically modeled. 
+
+\section{Iodination of Acetone}
+\subsection{Background \& Theory}
+\subsubsection{Reaction Rate Orders}
+
+The iodination of acetone is commonly used in undergraduate laboratories to demonstrate chemical kinetics as the reaction rate is easily monitored by the red-brown iodine color disappearing, which demonstrates the decrease in the concentration of iodine as the reaction progresses \autocite{birk_three_1992}. The reaction proceeds through three elementary steps where the second step is the rate limiting step.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.95\linewidth]{figures/chemdraw.pdf}
+% \end{figure}
+
+\begin{align}
+    % Step 1: Protonation equilibrium
+    \chemfig{CH_3-C(=[2]O)-CH_3} \quad + \quad \ce{H3O+} \quad
+    &\xrightleftharpoons[k_{-1}]{\quad k_1 \quad} \quad
+    \chemfig{CH_3-[0]C(=[2]OH^{+})-[0]CH_3} \quad + \quad \ce{H2O}
+    \\[1em]
+    % Step 2: Enol formation (slow, rate-determining)
+    \chemfig{CH_3-[0]C(=[2]OH^{+})-[0]CH_3} \quad + \quad \ce{H2O} \quad
+    &\xrightarrow{\quad k_2 \quad} \quad
+    \chemfig{CH_2=[0]C(-[2]OH)-[0]CH_3} \quad + \quad \ce{H3O+}
+    \\[1em]
+    % Step 3: Iodination (fast)
+    \chemfig{CH_2=[0]C(-[2]OH)-[0]CH_3} \quad + \quad \ce{I2} \quad
+    &\xrightarrow{\quad k_3 \quad} \quad
+    \chemfig{CH_3-[0]C(=[2]O)-[0]CH_2I} \quad + \quad \ce{HI} \label{mechanism}
+\end{align}
+\setcounter{equation}{0}
+\vspace{1em}
+
+
+The rate law may be derived by applying the pseudo-equilibrium approximation to the fast pre-equilibrium step  \autocite{dongxia} and the result is shared in \cref{theoRate} where $k_\textbf{obs}$ is the experimentally measurable reaction rate constant. The concentration of acetone is noted as $[\mathrm{Ac}]$ to condense the following equations.
+
+\begin{equation}
+    \mathrm{Rate}_2 = \frac{k_2 k_1}{k_{-1}} [\mathrm{Ac}][\mathrm{H_3O^+}] = k_\mathrm{obs} [\mathrm{Ac}][\mathrm{H_3O^+}] \label{theoRate}
+\end{equation}
+
+The method of initial rates is a common way to determine the form of the rate law. In this method the reaction rate is measured near the start of the reaction where the changes in reactant concentrations are negligible \autocite{initialrates}. 
+\begin{equation}
+    \mathrm{Rate} = k [\mathrm{Ac}]^{\alpha} [\mathrm{H_3O^+}]^{\beta} [\mathrm{I_2}]^{\gamma} \label{powerlaw}
+\end{equation}
+
+To find the reaction order with respect to HCl, iodine, and acetone concentration the reaction rate was measured while changing the concentration of the component of interest and holding the other concentrations constant. The rate equation may be linearized by taking its logarithm (\cref{linearized_rate}).
+\begin{equation}
+\ln(\mathrm{Rate}) = \ln (k) + \alpha \ln ( [\mathrm{Ac}] ) + \beta \ln ([\mathrm{H_3O^+}]) + \gamma \ln ([\mathrm{I_2}])  \label{linearized_rate}
+\end{equation}
+
+
+From \cref{linearized_rate} it is seen that when holding the rate constant $k$ and all other initial concentrations fixed the apparent orders may be measured as the slope of a best fit line. This relationship is presented mathematically in \cref{alpha}. The other orders, $\beta$ and $\gamma$, can be measured similarly to $\alpha$ by varying the initial concentrations of HCl or iodine.
+
+\begin{equation}
+    \alpha = \frac{\partial (\ln \mathrm{Rate})}{\partial (\ln [\mathrm{Ac}])} \label{alpha}
+\end{equation}
+
+
+\subsubsection{Activation Energy Determination}
+The Arrhenius equation relates the reaction rate constant to the reaction's activation energy and the reaction temperature \autocite{arrhenius}. The equation may be linearized by taking its logarithm, and the linearized form of the equation is useful to find the activation energy, $E_a$, and pre-exponential factor, $A$, from linear regression (\cref{eq:arrhenius_for_EaA}).
+
+\begin{equation}
+    k = A \exp \left( \frac{- E_a}{RT}\right) \quad \longrightarrow  \quad \underbrace{\ln (k)}_y = \underbrace{\ln (A)}_b + \underbrace{\frac{1}{T}}_x \underbrace{\left(\frac{-E_a}{R} \right)}_m \label{eq:arrhenius_for_EaA}
+\end{equation}
+
+\subsubsection{Beer-Lambert Law}
+
+The Beer-Lambert law \autocite{swinehart_beerlambert_1962} relates the absorption of light to the properties of the material through which the light is traveling. It states that the intensity of transmitted light decreases exponentially with the concentration of the absorbing species and the path length of the medium:
+
+\begin{equation}
+A = \epsilon b c
+\end{equation}
+
+where $A$ is the absorbance, $\epsilon$ is the molar absorptivity, $b$ is the path length, and $c$ is the concentration. This law is fundamental in spectrophotometric analysis and allows us to determine the concentration of $\mathrm{I_2}$ in the reaction mixture by measuring its absorbance. Absorbance measurements may be converted to concentration measurements with a linear calibration curve provided by course organizers (\cref{eq:calibrationcurve}). 
+
+\begin{equation}
+    A = m [I_2] + b \quad \longrightarrow \quad [I_2] = \frac{A-b}{m} \label{eq:calibrationcurve}
+\end{equation}
+\noindent
+The $m$ and $b$ parameters for each spectrophotometer are included in \cref{app:signals}. 
+
+\subsection{Methods}
+
+\subsubsection{Safety}
+
+Lab coats, nitrile gloves, and splash goggles were worn to prevent contact with chemicals and to avoid being pricked by any needles. HCl, iodine, and acetone were handled in the fume hood, where the sash was kept under the designated line. Chemicals were properly disposed of into the liquid waste containers, blunt-tip needles were disposed into the sharps container, and gloves were disposed of into the solid waste container. A safety shower and eye wash station were present if needed. Detailed SDS information for each reagent is included in \cref{app:SDS}.
+
+\subsubsection{Procedure}
+The recirculating water bath was turned on and set to the desired reaction temperature prior to beginning the experiment. The reactor was charged with deionized water and acetone by transferring the liquids with a graduated cylinder. The graduated cylinders were weighed before and after each addition to determine the mass of liquid added. The reactor agitator and peristaltic sipper pump were then turned on and the stirring speed was recorded from the digital display. Syringes with blunt-tip needles were labeled for iodine and HCl and filled accordingly. 
+
+HCl was injected into the reactor through the top port, and iodine was injected after the reactor temperature stabilized and UV–visible spectrophotometer data collection was started. Each syringe was weighed before and after injection into the reactor to determine the mass of reagent delivered. Absorbance data was collected for approximately 100 seconds before stopping data collection, turning off the sipper pump, and draining the reactor. The reactor was rinsed two times with 650 mL of deionized water before the next reaction.
+
+
+\subsubsection{Standard Run}
+The reagent concentrations and masses for a ``standard'' run are included in \cref{tab:standardrun}. Volume targets were used to approximately dose reagents into syringes/graduated cylinders while recorded masses before and after addition to the reactor were used to calculate concentrations for each reaction. For reactions where the concentration of one reagent was varied, the target mass of water was adjusted to maintain a target total volume of 650 mL.
+
+\begin{table}[H]
+    \centering
+    \caption{Reagent concentrations for a standard acetone iodination reaction run.}
+    \label{tab:standardrun}
+    \begin{tabular}{lcccc}
+        \toprule
+        Reagent & Desired Conc. (M) & Stock Conc. (M) & Volume (mL) & Mass (g) \\
+        \midrule
+        HCl      & 0.02  & 1.00  & 13.00    & 13.00     \\
+        Iodine   & 0.002 & 0.10  & 13.00    & 13.00     \\
+        Acetone  & 2.00     & 13.60 & 95.59 & 75.51  \\
+        Water    & 45.13 & 55.52 & 528.41 & 528.41 \\
+        \midrule
+        Total & & & 650.0 & 629.9 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\subsubsection{Apparatus}
+\cref{fig:reactordiagram} shares a diagram of the reactor setup used. The reactor is a jacketed glass 800 mL reactor. The heating jacket water was heated to a temperature set at 30, 35, or 40 ºC, but the temperatures used in calculations were thermocouple readings which were slightly lower.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/reactor_diagram.pdf}
+    \caption{Diagram of reactor apparatus.}
+    \label{fig:reactordiagram}
+\end{figure}
+
+\subsubsection{Temperature Measurements}
+The temperature inside the reactor was measured with a thermocouple at a sampling rate of 1 measurement per second. The start time of each reaction was recorded to compute the average and standard deviation of the temperature readings during the time absorbance measurements were recorded.
+
+\subsubsection{UV-visible Spectroscopy Measurements}
+Absorbance measurements at 510 nm were recorded with an Ocean Optics spectrophotometer using the Vernier Logger Pro software at a sampling rate of 1 measurement per second.  Outliers were removed by random sample consensus  \autocite{RANSAC} (see \cref{app:processing} for more detail). 
+
+\subsection{Results and Discussion}
+\subsubsection{Observed Reaction Orders}
+
+A power-law rate law relationship in the form of \cref{powerlaw} was investigated. \Cref{fig:reactionOrders} shares the collected reaction rate data linearized and fit with linear regression. From \cref{fig:reactionOrders}, the 95\% confidence interval on the acetone order is (0.96 $\pm$ 0.61), for HCl it is (0.98 $\pm$ 0.43), and the reaction order with respect to iodine is (-0.2 $\pm$ 1.8). These confidence intervals were computed as the standard error in the slope multiplied by the critical t-value at 95\% confidence with 1 degree of freedom.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/orderplot.pdf}
+    \caption{Reaction orders from the slope of a linearized form of the rate equation. Each subplot shares the same y-axis. Plotted error bars are asymmetric and were propagated from the error in the measured reaction rate in accordance with Hites  \autocite{hites_calculating_2017}. The slope of the linear fit lines correspond to the observed reaction order in accordance with \cref{alpha}. Though it appears like many of the points have no error bars, they are simply smaller than the size of the plotted marker.}
+    \label{fig:reactionOrders}
+\end{figure}
+
+It is shown in \cref{fig:reactionOrders} that the observed reaction orders are in statistical agreement with the theoretical ($p_\alpha=0.559, p_\beta = 0.648, p_\gamma = 0.464$). Details of statistical tests are shared in \cref{app:tests}. The high $R^2$ values for the HCl and acetone experiments shows a strong agreement between a linear fit and the collected data, consistent with a power law rate law. The large relative error and poor $R^2$ value for the set of experiments seeking to determine the reaction order with respect to iodine are consistent with the zeroth order derived from first principles \autocite{dongxia}. The data plotted in \cref{fig:reactionOrders} are tabulated in \cref{app:orderData}. 
+
+
+
+\subsubsection{Multiple Linear and Nonlinear Regression}
+A source of systematic error in the linear regression analysis to determine the reaction order with respect to each component was the slightly different concentrations from run to run. Additionally, the confidence intervals provided by linear regression of two parameters using three data points are large as the t-statistic only has one degree of freedom. There are two approaches to fitting rate data to a rate law which accounts for the slight variations in initial concentrations of the other reagents: multiple linear regression and nonlinear regression. 
+
+The reaction order data was collected at the same temperature such that the rate constant, k, was held constant. This allows for fitting the rate equation data to a linear equation of the form shared in \cref{multiplelinear} where $\beta_0=\ln(k)$ and $\beta_i$ is the observed reaction order for species i.
+
+\begin{equation}
+    \hat{y} = \beta_0 + \sum_{i=1}^{n} \beta_i [X]_i \label{multiplelinear}
+\end{equation}
+
+Nonlinear regression fits the measured reaction rate directly to the proposed power law form of the rate equation without requiring linearization. Unlike linear regression, there is no closed-form solution to nonlinear regression, so the Levenberg-Marquardt algorithm  \autocite{levenberg_method_1944, marquardt} was used to minimize the sum of the squared residuals across the collected data. Importantly, the residuals minimized by nonlinear regression differ from those minimized by multiple linear regression, since linearization applies a nonlinear transformation to the residuals. This accounts for the small discrepancy in fitted parameters between the two methods. The results from each regression method are shared in \cref{tab:regressionResults}.
+
+
+
+\begin{table}[H]
+    \caption{Reaction orders using different regression methods. Indicated errors are 95\% confidence intervals where the degrees of freedom is the number of data points minus the number of model parameters.}
+    \centering
+    % \vspace{0.5em}
+
+    % {\large
+    % $\mathrm{Rate} = k [\mathrm{Acetone}]^{\alpha}
+    % [\mathrm{H_3O^+}]^{\beta}
+    % [\mathrm{I_2}]^{\gamma}$
+    % }
+    % \vspace{0.5em}
+    \begin{tabular}{c|cccc}
+    \toprule
+    Method & $\alpha$ (Acetone) & $\beta$ (HCl) & $\gamma$ (Iodine) & $\ln(k)$ \\
+    \midrule
+    linear regression & $0.98 \pm 0.43$ & $0.96 \pm 0.61$ & $-0.2 \pm 1.8$ & --- \\
+    multiple linear regression & $0.97 \pm 0.11$ & $1.092 \pm 0.068$ & $-0.14 \pm 0.10$ & $-10.27 \pm 0.80$ \\
+    nonlinear regression  \autocite{marquardt} & $1.026 \pm 0.063$ & $0.954 \pm 0.068$ & $-0.134 \pm 0.067$ & $-10.26 \pm 0.15$ \\
+    \bottomrule
+    \end{tabular}
+    \label{tab:regressionResults}
+\end{table}
+
+The reaction orders from linear regression shared in \cref{tab:regressionResults} are in statistical agreement with the orders predicted from the pseudo-equilibrium and rate limiting step approximations. Another way to arrive at this conclusion is that the theoretical values (1st order in HCl and acetone and 0th order in iodine) are included within the 95\% confidence intervals. The confidence intervals for nonlinear and multiple linear regression are smaller as there are more degrees of freedom ($\nu = \ $\# data points $-$ \# model parameters $=3$). Observed orders from nonlinear regression for  acetone and HCl are also in agreement with the theoretical orders ($p_\alpha = 0.273, p_\beta = 0.117$), but the order for iodine is not in agreement ($ p_\gamma = 0.008$). 
+
+Despite this  disagreement, $\gamma = -0.134$ was retained in subsequent calculations rather than setting it to zero, as the value is small in magnitude and its physical effect on the computed rate is negligible at the concentrations studied. The sensitivity analysis in \cref{sec:cstr} confirms this, showing  uncertainty in $\gamma$ contributes less than 6\% relative uncertainty to the predicted reactor volume, compared to roughly 70\% from the Arrhenius parameters. The statistical disagreement is therefore acknowledged but does not materially affect the engineering conclusions drawn from the rate law.
+
+
+\subsubsection{Activation Energy}
+\label{sec:EA}
+
+Rate constants were calculated following the determination of reaction orders using the method of initial rates, where reactant concentrations undergo negligible change over the first 5–10\% of the reaction. The rate equation was rearranged to solve for the rate constant (\cref{rateconstant}), where $\alpha$ and $\beta$ are the reaction orders obtained from nonlinear regression.
+
+\begin{equation}
+    k = \frac{\mathrm{Rate}}{\mathrm{[Acetone]_0^\alpha [HCl]_0^\beta [I_2]_0^\gamma}} \label{rateconstant}
+\end{equation}
+
+The error of the natural log of the rate constant is readily calculated from the linearized form of the rate equation. The details of this derivation along with an example calculation are shared in \cref{app:errorProp}, but the result is presented in \cref{errorbars_lnk}.
+
+% remember to put information in the derivation about how the error in the concentrations is way negelible compared to the fit params
+
+\begin{equation}
+\delta \ln(k) = \sqrt{
+    \left(\frac{\delta \mathrm{Rate}}{\mathrm{Rate}}\right)^2
+    + \ln([\mathrm{Ac}])^2 \, \delta\alpha^2
+    + \ln([\mathrm{H_3O^+}])^2 \, \delta\beta^2
+    + \ln([\mathrm{I_2}])^2 \, \delta\gamma^2}
+\label{errorbars_lnk}
+\end{equation}
+
+\Cref{fig:activation_energy} shares a linearized Arrhenius plot for the activation energy measurement experiments and was generated with rate constants computed with \cref{rateconstant} and the average temperature measurement during the time absorbance measurements were collected.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/activationenergy.pdf}
+    \caption{Determination of activation energy (Ea) from linearized form of the Arrhenius equation. Rate constants were calculated from the method of initial rates (\cref{rateconstant}), 
+    and the error bars were computed from \cref{errorbars_lnk}. Details for computing the 95\% confidence interval are shared in \cref{app:plotCI}.}
+    \label{fig:activation_energy}
+\end{figure}
+
+The high $R^2$ value between the collected data and the linear fit along with a visibly linear relationship indicates a strong linear relationship, consistent with the Arrhenius equation. The error bars on the collected values for ln(k) are symmetric, though it should be noted that the error bars of the logarithm being symmetric indicate the error bars for the rate constant, $k$, itself will be asymmetric. The error bars in the logarithm of $k$ are smaller than the 95\% confidence interval in the linear regression which is consistent with a central assumption in ordinary least squares that uncertainty is primarily in the response variable rather than the predictor.
+
+
+The experimentally determined activation energy is ($114.4 \, \pm \, 5.6)$ kJ mol$^{-1}$ (standard error), and the pre-exponential factor itself is large and would have an associated asymmetric error, so instead its natural log is reported. The determined value of $\ln(A)$ is ($36.0 \pm 2.2$) (standard error). These results are in statistical agreement ($p = 0.126$) with Albery's value for acetone iodination \autocite{albery_measurement_1969} of ($86.6 \pm 0.23$) kJ mol$^{-1}$. Interestingly, Delluva  \autocite{delluva2015} mistakenly claims that Albery's \autocite{albery_measurement_1969} measurements were for the bromination of acetone while in reality they were for the iodination of acetone. A summary of literature results for acetone iodination are shared in \cref{tab:literatureEA} which is largely adapted from Table 7 in Albery \autocite{albery_measurement_1969}. 
+
+\begin{table}[h]
+\centering
+\caption{Energies of activation for the iodination of acetone. Reported energies were converted to kJ mol$^{-1}$ and reported errors are standard errors.}
+\begin{tabular}{lc}
+\toprule
+Source & $E_a$ (kJ mol$^{-1}$) \\
+\midrule
+Rice and Kilpatrick  \autocite{rice_measurement_1923} & $86.62 \pm 0.25$ \\
+Bell and Bamford (in Albery  \autocite{albery_measurement_1969})    & $85.97 \pm 0.63$ \\
+Smith \autocite{smith_57_1934} (\textit{only 2 temperatures})              & $86.52$ \\
+Albery and Robinson \autocite{albery_measurement_1969}, 25°C     & $86.74 \pm 0.21$ \\
+Albery and Robinson \autocite{albery_measurement_1969}, 35°C     & $86.60 \pm 0.23$ \\
+Delluva  \autocite{delluva2015} & $88.5 \pm 0.38$ \\
+\bottomrule
+\end{tabular}
+\label{tab:literatureEA}
+\end{table}
+
+
+Despite statistical agreement at the $p = 0.126$ level, this conclusion is tenuous: with only three temperature points, the critical $t$-value is approximately 12.7, producing a confidence interval so wide that nearly any physically reasonable $E_a$ would fall within it. One or two additional temperatures would substantially reduce this uncertainty and allow a more meaningful assessment of agreement with the literature consensus. 
+
+The average measured activation energy from 12 groups of University of Delaware students in 2014 was ($88.5 \pm 1.3$) kJ mol$^{-1}$, and the average pre-exponential factor was ($8.60 \times 10^{11} \pm 2.72 \times 10^{11}$) L $\mathrm{mol^{-1}s^{-1}}$  \autocite{delluva2015}. The experimentally determined pre-exponential factor, $A = \left(4.31\ ^{+33}_{-4.0}\right) \times10^{15}\ \left(\mathrm{mol\ L^{-1}}\right)^{-0.846}\ \mathrm{s^{-1}}$, is approximately four orders of magnitude larger than the 2014 cohort value. This is consistent with a compensation effect: the overestimated $E_a = 114.4$ kJ mol$^{-1}$ relative to the literature consensus of $\sim$87 kJ mol$^{-1}$ necessitates a larger $A$ to reproduce the observed rate constants near 303~K.
+
+Comparing $\ln(A)$ values in log-space, the t-statistic is $t=3.87$. At $\nu = 1$ degree of freedom, $p = 0.162$, indicating statistical agreement with the 2014 cohort value, though this conclusion remains tenuous given the large critical $t$-value of 12.7 at $\nu = 1$.
+
+
+
+\subsubsection{Sources of Error}
+
+Several sources of systematic error may explain the elevated activation energy of 114.4 kJ mol$^{-1}$  relative to the literature consensus of approximately 86--89 kJ mol$^{-1}$ (\cref{tab:literatureEA}). It should be noted that more reactions at different temperatures would be needed to have the statistical power to claim the apparent activation energy is different from the literature value. Nevertheless, the most impactful  sourceis likely temperature measurement error. If the thermocouple was not independently calibrated against a reference standard, a systematic offset in the recorded temperature would shift all rate constants together and distort the slope of the Arrhenius plot, as even a 1--2 K bias applied consistently across all runs would produce a meaningful change in the fitted $E_a$. Related to this, the reaction was initiated by iodine injection before the system had fully reached thermal equilibrium with the heating jacket due to time constraints, meaning the true reaction temperature during the initial rate window was a slowly increasing value rather than a constant value.
+
+A second source of systematic error is the assumption of ideal mixing when computing concentrations. The total solution volume was estimated as the sum of the volumes of each component added, which implicitly assumed ideal liquid mixtures with no volume of mixing. Acetone-water mixtures are known to exhibit negative excess volumes \autocite{shakhashiri, ivanov, kurtzrefractive_1965, jedlovszky}, meaning the true solution volume is slightly less than the sum of component volumes, and this would cause a systematic underestimation of all concentrations and therefore an underestimation of the rate constants. 
+
+Additionally, the narrow temperature range studied (30--40$^\circ$C, a 10 K spread) means the Arrhenius regression determines its slope from points that are clustered closely together along the $1/T$ axis, so any small correlated error in the rate constants, such as a consistent baseline absorbance offset in the spectrophotometer or drift in the peristaltic pump flow rate affecting the effective optical path length, would be amplified into an error in the fitted parameters. Taken together, these systematic effects are consistent with an overestimated $E_a$, and the observation that prior University of Delaware cohorts using an older laboratory setup obtained values numerically closer to the literature consensus suggests the discrepancy may originate in a hardware or procedural change rather than a flaw in the kinetic model itself. 
+
+
+
+
+\subsection{Application of Rate Law}
+\subsubsection{BSTR Modeling}
+
+Using the observed reaction orders from nonlinear regression, a batch reaction with autocatalytic behavior was modeled. To model this system, an initial-change-end (ICE) table \autocite{kinetics_textbook} was used to describe the reaction (\cref{tab:ICEtable}). 
+
+
+\begin{table}[H]
+    \caption{ICE table for auto-catalytic acetone iodination reaction.}
+    
+    \centering
+    \begin{tabular}{cccc}
+    \toprule
+    species & initial & change & end \\
+    \midrule
+    $\mathrm{I_2}$ & $C_{I,0}$ & $-x C_{I,0}$ & $C_{I,0} (1-x)$ \\
+    $\mathrm{Acetone}$ & $C_{Ac,0}$ & $-x C_{I,0}$ & $C_{Ac,0} -x C_{I,0}$ \\
+    $\mathrm{H_3O^+}$ & $C_{H,0}$ & $+x C_{I,0}$ & $C_{H,0} +x C_{I,0}$ \\
+    \bottomrule
+    \end{tabular}
+    \label{tab:ICEtable}
+\end{table}
+
+The power law rate law for the disappearance of iodine in terms of the initial concentrations and the conversion is shared in \cref{modeledRate}. 
+
+\begin{align} 
+    r_{I_2} &= - k(T) \mathrm{[Ac]^\alpha  [H_3O^+]^\beta [I_2]^\gamma} \\
+    &= - k(T) \left[ C_{Ac,0} -x C_{I,0} \right]^\alpha [C_{H,0} +x C_{I,0}]^\beta [C_{I,0} (1-x)]^\gamma \label{modeledRate}
+\end{align}
+The rate constant at 303 K was computed using the measured Arrhenius parameters, and the uncertainty in the rate constant was computed using the confidence limit method described in Hites \autocite{hites_calculating_2017} (\cref{eq:hites}). The large relative error in the predicted rate constant stems from the large critical t-value ($t_\text{crit}(95\%, \nu=1) \approx 12.7$). More degrees of freedom would dramatically decrease the relative error.
+\begin{equation}
+    k(303 \  \text{K}) = \left( 8.6^{+2.8}_{-4.1} \right) \times 10^{-5}\ \left(\frac{\text{mol}}{\text{L}}\right)^{-0.846} \text{s}^{-1} \quad (95\% \text{ CI}) \label{eq:hites}
+\end{equation}
+The ``design equation,'' a mathematical formula relating the reactor volume and/or time to the feed flow rates, conversion, and reaction rate, for a BSTR is shared in \cref{BSTRdesign} adapted from Roberts  \autocite{kinetics_textbook}. 
+
+\begin{equation}
+    \frac{dx}{dt} = \frac{k(T)\,[\mathrm{Ac}]^\alpha [\mathrm{H_3O^+}]^\beta [\mathrm{I_2}]^\gamma}{C_{\mathrm{I_2,0}}}
+    \label{BSTRdesign}
+\end{equation}
+
+This differential equation was then numerically simulated using Euler's method \autocite{eulersMethod} implemented in Python. The fact that the error on the measured $\ln(A)$ is symmetric means the error on $A$ is asymmetric. The asymmetric uncertainty complicates prediction of the rate constant at new temperatures  \autocite{hites_calculating_2017, pernot_comment_2017, hites_reply_2017}.  Concentrations less than zero were set to zero as a negative concentration has no physical meaning. The results of this numerical simulation are shared in \cref{fig:BSTR}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/BSTRmodel3.pdf}
+    \caption{Numerical simulation of batch stirred-tank reaction using Euler’s method. Shaded regions indicate 5th/95th and 25th/75th percentiles from Monte Carlo simulation ($N=500$). Details of the numerical simulation are shared in \cref{app:bstr}.}
+    \label{fig:BSTR}
+\end{figure}
+
+The numerical simulation shared in \cref{fig:BSTR} shows the concave down behavior expected from an autocatalytic reaction since the catalyst concentration increases as the reaction proceeds. In other words, this reaction accelerates into completion instead of featuring an exponential decay to its equilibrium concentration like how a first order reaction would behave. \Cref{fig:BSTR} also shows that after 5000 seconds the reaction has not fully converted, though there is a large uncertainty in this as the plotted percentiles exhibit large variation stemming from the large relative error in the rate constant.
+
+
+
+
+\subsubsection{Modeling and Sizing CSTR}
+\label{sec:cstr}
+
+
+The observed reaction rate was also used to find the volume needed to design a CSTR for an iodoacetone production company at its pilot factory for given operating conditions. The required CSTR volume was computed from \cref{CSTR} adapted from Roberts  \autocite{kinetics_textbook} where $v_0$ is the volumetric flow rate, $C_{A0}$ is the initial concentration of acetone, $x_A$ is the outlet acetone conversion, and $-r_A$ is the modeled reaction rate, the rate of disappearance of acetone.
+
+
+\begin{equation}
+    V = \frac{v_0  C_{A0}  x_A}{-r_A} \label{CSTR}
+\end{equation}
+
+The CSTR volume required to achieve 80\% acetone conversion at 353 K was determined to be around 274.3 L using the kinetic parameters obtained in Phase 2 and the operating conditions given in the problem statement. The nonlinear regression values displayed in \cref{tab:regressionResults} were used since it does not assume equal variance in log-space. However, the 90\% confidence interval derived from a Monte Carlo simulation (N = 100,000 samples) spans from 58 L to 1,290 L. This extreme width (over two orders of magnitude) reflects how the kinetic parameters’ uncertainty is compounded and has significant practical implications. A reactor sized at the true value would be catastrophically undersized relative to the upper bound while the lower bound suggests that the true volume should be much smaller. The distribution is skewed right, evident by a mean of 427 L and a median of 274 L, indicating the uncertainty is not symmetric, and the nominal prediction alone is not enough to make engineering design decisions. It is advised that the pilot factory uses the upper confidence bound as a conservative volume for their reactor.
+
+\subsection{Sensitivity Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/spider_sensitivity.pdf}
+    \caption{Spider plot showing sensitivity of each parameter.}
+    \label{fig:spiderplot}
+\end{figure}
+
+In \cref{fig:spiderplot}, each kinetic parameter was varied from 0 to 100\% above its nominal value while holding all others fixed. The Arrhenius parameters Ea and $\ln(A)$ produce the steepest response in required reactor volume, reflecting their appearance in the exponential terms of the rate expression. At 80\% conversion, a change in $\alpha$ is more sensitive than that of $\beta$ despite having nearly the same dependence in the rate equation. Acetone has been mostly consumed (down to 0.2 M) at this point while the hydronium concentration is close to 1 (0.801 M) where $\ln(C_{\mathrm{H_3O^+}})$ nearly vanishes.
+
+
+
+\begin{table}[H]
+    \caption{Sensitivity of derived rate law parameters}
+    \centering
+    \begin{tabular}{l|ccc}
+    \toprule
+    Parameter & Sensitivity & Relative Sensitivity \\
+    \midrule
+    $E_a$ & $\pm 180.7 \ \mathrm{L}$ & $\pm 65.9\%$ \\
+    $\ln(A)$ & $\pm 212.6 \ \mathrm{L}$ & $\pm 77.5\%$ \\
+    $\alpha$ & $\pm 5.3 \ \mathrm{L}$ & $\pm 1.9\%$ \\
+    $\beta$ & $\pm 0.8 \ \mathrm{L}$ & $\pm 0.3\%$ \\
+    $\gamma$ & $\pm 5.7 \ \mathrm{L}$ & $\pm 2.1\%$ \\
+    \bottomrule
+    \end{tabular}
+    \label{tab:sensitivity}
+\end{table}
+
+
+The sensitivity analysis reveals that uncertainty in the Arrhenius parameters $E_a$ and $\ln(A)$ dominates the total uncertainty, contributing $\pm 66\%$ and $\pm 78\%$ relative uncertainty to $V$, respectively. Since both terms appear inside an exponential, this was fully anticipated. Small errors in $E_a$ and $\ln(A)$ are amplified nonlinearly into large errors in the rate constant $k$, and consequently in the reactor volume. In contrast to the Arrhenius parameters, the reaction orders $\alpha$, $\beta$, and $\gamma$ each contribute less than 2\% relative uncertainty, making them minor sources of error. 
+
+A subtle result emerges when taking a closer look at the sensitivity to $\beta$ (HCl order, $\pm 0.3\%$) versus $\gamma$ (Iodine order, $\pm 2.1\%$), despite $\gamma$ being nearly zeroth order while $\beta$ is nearly first order. This paradox is resolved by recognizing that the sensitivity of the rate to an exponent parameter scales with the logarithm of the corresponding concentration. At 80\% conversion, $C_I = 0.2 \ \mathrm{M}$ giving $\ln(C_I) = -1.61$, while $C_H = 0.801 \ \mathrm{M}$ giving $\ln(C_H) = -0.22$. The iodine concentration is nearly depleted at this point in the reaction, amplifying the influence of $\gamma$ on the rate. Meanwhile, the hydronium concentration generated by reaction offsets the low initial HCl concentration, keeping $C_{\mathrm{H_3O^+}}$ close to 1 M and minimizing the influence of $\beta$. The sensitivity ranking is specific to the operating conditions and would shift depending on the desired conversion.
+
+Given that $E_a$ and $\ln(A)$ are the dominant uncertainty sources, the most efficient experiments for improving volume prediction would be additional rate measurements across a wider temperature range. The current Arrhenius parameters were regressed from data around 303 K, and extrapolation to 353 K amplifies the uncertainty. Running initial-rate experiments at several temperatures between 303--353 K would constrain $E_a$ and $\ln(A)$ in the regime relevant to the reactor design, and would be more impactful than collecting additional concentration dependence to refine $\alpha$, $\beta$, or $\gamma$.
+
+
+
+
+
+
+
+
+\subsection{Conclusions and Recommendations}
+
+The acid-catalyzed iodination of acetone was found to follow a rate law that is approximately first order in both acetone and HCl and zeroth order in iodine, consistent with the pseudo equilibrium mechanism \autocite{dongxia}. Nonlinear regression yielded the most precise parameter estimates ($\alpha = 1.026 \pm 0.063$, $\beta = 0.954 \pm 0.068$, $\gamma = -0.134 \pm 0.067$, 95\% CI), and an activation energy of $E_a = (114.4 \pm 5.6) \ \mathrm{kJ \, mol^{-1}}$ and $\ln(A) = (36.0 \pm 2.2)$ (standard errors) were determined from the Arrhenius plot. These parameters were used to model autocatalytic behavior in a BSTR and to size a CSTR for iodoacetone production at 353 K.
+
+The nominal CSTR volume required to achieve 80\% acetone conversion was estimated to be approximately 274 L. However, the 90\% confidence interval derived from a Monte Carlo simulation spans 58--1,290 L, driven mainly by uncertainty in $E_a$ and $\ln(A)$. For the conservative pilot factory design, the upper confidence bound was suggested as the design volume. To most efficiently reduce this uncertainty, additional kinetic experiments should be performed across a wider temperature range between 303--353 K, as this would constrain the Arrhenius parameters in the relevant regime. Further refinement of the reaction orders would show little improvement to the volume prediction at the studied conditions.
+
+\input{pressure}
+
+\printbibliography
+
+\input{appendices.tex}
+
+\end{document}
